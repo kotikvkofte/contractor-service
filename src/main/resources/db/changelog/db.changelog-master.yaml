@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/create-country-table.yml
+  - include:
+      file: db/changelog/changeset/fill-country-table.yml
+
+  - include:
+      file: db/changelog/changeset/create-industry-table.yml
+  - include:
+      file: db/changelog/changeset/fill-industry-table.yaml
+
+  - include:
+      file: db/changelog/changeset/create-org_form-table.yaml
+  - include:
+      file: db/changelog/changeset/fill-org_form-table.yaml
+
+  - include:
+      file: db/changelog/changeset/create-contractor-table.yaml
+
+  - include:
+      file: db/changelog/changeset/fix-sequence-for-org-form.yml
+  - include:
+      file: db/changelog/changeset/fix-sequence-for-industry.yml

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-industry-table
+      author: Artyom
+      changes:
+        - createTable:
+            tableName: industry
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false

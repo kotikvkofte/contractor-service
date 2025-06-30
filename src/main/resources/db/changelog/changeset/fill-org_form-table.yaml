@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-org_form
+      author: Artyom
+      changes:
+        - loadData:
+            file: db/changelog/csv/org_form.csv
+            tableName: org_form
+            separator: ";"
+            encoding: UTF-8

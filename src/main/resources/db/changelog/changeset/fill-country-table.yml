@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-country
+      author: Artyom
+      changes:
+        - loadData:
+            file: db/changelog/csv/country.csv
+            tableName: country
+            separator: ";"
+            encoding: UTF-8

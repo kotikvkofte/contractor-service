@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: fix-sequence-for-industry
+      author: Artyom
+      changes:
+        - sql:
+            sql: SELECT setval('industry_id_seq', (SELECT MAX(id) FROM industry));
