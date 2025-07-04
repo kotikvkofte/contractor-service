@@ -4,7 +4,9 @@ import org.ex9.contractorservice.dto.orgform.OrgFormRequestDto;
 import org.ex9.contractorservice.dto.orgform.OrgFormResponseDto;
 import org.ex9.contractorservice.model.OrgForm;
 
-public class OrgFormMapper {
+public final class OrgFormMapper {
+
+    private OrgFormMapper() {}
 
     public static OrgFormResponseDto toDto(OrgForm orgForm) {
         OrgFormResponseDto orgFormResponseDto = new OrgFormResponseDto();

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IndustryRepository extends CrudRepository<Industry, Integer> {
+
     List<Industry> findAllByIsActiveTrue();
 
     @Query("UPDATE industry SET is_active=false WHERE id=:id")

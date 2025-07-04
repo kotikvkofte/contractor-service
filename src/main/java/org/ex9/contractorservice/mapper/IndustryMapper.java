@@ -4,7 +4,9 @@ import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.industry.IndustryResponseDto;
 import org.ex9.contractorservice.model.Industry;
 
-public class IndustryMapper {
+public final class IndustryMapper {
+
+    private IndustryMapper() {}
 
     public static IndustryResponseDto toDto(Industry industry) {
         IndustryResponseDto industryResponseDto = new IndustryResponseDto();

@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class CountryService {
+
     private final CountryRepository countryRepository;
 
     @Autowired
@@ -51,4 +52,5 @@ public class CountryService {
         var country = countryRepository.findById(id).orElseThrow(() -> new CountryNotFoundException("Country not found with id " + id));
         return CountryMapper.toDto(country);
     }
+
 }

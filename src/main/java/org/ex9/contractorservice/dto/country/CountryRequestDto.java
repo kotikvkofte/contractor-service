@@ -7,8 +7,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CountryRequestDto {
+
     @NotNull
-    String id;
+    private String id;
+
     @NotNull
-    String name;
+    private String name;
+
 }

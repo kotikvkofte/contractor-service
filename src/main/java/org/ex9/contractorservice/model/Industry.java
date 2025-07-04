@@ -21,6 +21,6 @@ public class Industry {
 
     @Column(value = "is_active")
     @Builder.Default
-    private Boolean isActive=true;
+    private Boolean isActive = true;
 
 }

@@ -21,4 +21,5 @@ public interface CountryRepository extends CrudRepository<Country, String> {
     @Query("UPDATE country SET is_active=false WHERE id=:id")
     @Modifying
     void deleteById(@Param("id") String id);
+
 }

@@ -4,7 +4,9 @@ import org.ex9.contractorservice.dto.country.CountryRequestDto;
 import org.ex9.contractorservice.dto.country.CountryResponseDto;
 import org.ex9.contractorservice.model.Country;
 
-public class CountryMapper {
+public final class CountryMapper {
+
+    private CountryMapper() {}
 
     public static CountryResponseDto toDto(Country country) {
         CountryResponseDto countryResponseDto = new CountryResponseDto(country.getId(), country.getName());

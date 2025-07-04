@@ -5,7 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class IndustryRequestDto {
-    Integer id;
+
+    private Integer id;
+
     @NotNull
-    String name;
+    private String name;
+
 }

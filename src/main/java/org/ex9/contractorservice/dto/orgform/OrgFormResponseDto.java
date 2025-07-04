@@ -4,6 +4,9 @@ import lombok.Data;
 
 @Data
 public class OrgFormResponseDto {
-    Integer id;
-    String name;
+
+    private Integer id;
+
+    private String name;
+
 }
