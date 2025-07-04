@@ -1,14 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: create-org_form
+      id: create-country
       author: Artyom
+      comment: "Создание справочной таблицы country"
       changes:
         - createTable:
-            tableName: org_form
+            tableName: country
             columns:
               - column:
                   name: id
-                  type: serial
+                  type: text
                   constraints:
                     primaryKey: true
                     nullable: false

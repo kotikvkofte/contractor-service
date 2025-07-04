@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: fix-sequence-for-industry
       author: Artyom
+      comment: "Исправление sequence таблицы industry для правильного формирования первичного ключа"
       changes:
         - sql:
             sql: SELECT setval('industry_id_seq', (SELECT MAX(id) FROM industry));

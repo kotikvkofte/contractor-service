@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: fix-sequence-for-org-form
       author: Artyom
+      comment: "Исправление sequence таблицы org_form для правильного формирования первичного ключа"
       changes:
         - sql:
             sql: SELECT setval('org_form_id_seq', (SELECT MAX(id) FROM org_form));

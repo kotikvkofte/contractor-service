@@ -1,10 +1,11 @@
 databaseChangeLog:
   - changeSet:
-      id: create-industry-table
+      id: create-org_form
       author: Artyom
+      comment: "Создание справочной таблицы org_form"
       changes:
         - createTable:
-            tableName: industry
+            tableName: org_form
             columns:
               - column:
                   name: id

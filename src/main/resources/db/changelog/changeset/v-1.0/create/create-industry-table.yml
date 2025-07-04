@@ -1,14 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: create-country
+      id: create-industry-table
       author: Artyom
+      comment: "Создание справочной таблицы industry"
       changes:
         - createTable:
-            tableName: country
+            tableName: industry
             columns:
               - column:
                   name: id
-                  type: text
+                  type: serial
                   constraints:
                     primaryKey: true
                     nullable: false
