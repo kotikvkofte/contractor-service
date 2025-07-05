@@ -9,9 +9,7 @@ public final class IndustryMapper {
     private IndustryMapper() {}
 
     public static IndustryResponseDto toDto(Industry industry) {
-        IndustryResponseDto industryResponseDto = new IndustryResponseDto();
-        industryResponseDto.setId(industry.getId());
-        industryResponseDto.setName(industry.getName());
+        IndustryResponseDto industryResponseDto = new IndustryResponseDto(industry.getId(), industry.getName());
         return industryResponseDto;
     }
 

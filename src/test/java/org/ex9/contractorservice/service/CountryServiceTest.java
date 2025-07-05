@@ -130,7 +130,6 @@ class CountryServiceTest {
     @DisplayName("findById() throw exception when id not exists")
     void findById_WhenNotExists_ShouldThrowException() {
         String id = "DE";
-        Country country = new Country("DE", "Germany", true);
 
         when(countryRepository.findById(id)).thenReturn(Optional.empty());
 

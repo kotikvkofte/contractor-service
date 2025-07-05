@@ -2,6 +2,7 @@ package org.ex9.contractorservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotNull;
+import org.apache.logging.log4j.LogManager;
 import org.ex9.contractorservice.dto.country.CountryRequestDto;
 import org.ex9.contractorservice.dto.country.CountryResponseDto;
 import org.ex9.contractorservice.exception.CountryNotFoundException;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("country")
 public class CountryController {
 
+    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(CountryController.class);
     private final CountryService countryService;
 
     @Autowired
@@ -32,7 +34,11 @@ public class CountryController {
     @GetMapping("/all")
     @Operation(summary = "Get country's list")
     public ResponseEntity<List<CountryResponseDto>> getAllActive() {
+
+        LOG.info("Get all country's list");
+
         return ResponseEntity.ok(countryService.findAll());
+
     }
 
     @GetMapping("/{id}")
