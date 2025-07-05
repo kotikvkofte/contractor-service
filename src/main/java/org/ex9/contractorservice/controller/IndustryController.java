@@ -1,6 +1,11 @@
 package org.ex9.contractorservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.industry.IndustryResponseDto;
@@ -20,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("industry")
+@Tag(name = "Industry API", description = "API for managing industry reference data in the contractor service")
 public class IndustryController {
 
     private final IndustryService industryService;
@@ -30,13 +36,44 @@ public class IndustryController {
     }
 
     @GetMapping("/all")
-    @Operation(summary = "Get industry's list")
+    @Operation(
+            summary = "Get all active industries",
+            description = "Retrieves a list of all industries with is_active = true."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved the list of active industries",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = IndustryResponseDto.class)
+                    )
+            )
+    })
     public ResponseEntity<List<IndustryResponseDto>> getAllActive() {
         return ResponseEntity.ok(industryService.findAll());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Receiving by id")
+    @Operation(
+            summary = "Get industry by ID",
+            description = "Retrieves an industry by its unique identifier. Returns only active industries (is_active = true)."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully retrieved the industry",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = IndustryResponseDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Industry not found",
+                    content = @Content
+            )
+    })
     public ResponseEntity<IndustryResponseDto> getById(@PathVariable @NotNull int id) {
         try {
             return ResponseEntity.ok(industryService.findById(id));
@@ -46,7 +83,26 @@ public class IndustryController {
     }
 
     @PutMapping("/save")
-    @Operation(summary = "Creating a new or updating an existing industry")
+    @Operation(
+            summary = "Create or update an industry",
+            description = "Creates a new industry or updates an existing one. " +
+                    "If the ID is specified, updates the existing industry; else, creates a new one."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Industry successfully created or updated",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = IndustryResponseDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data",
+                    content = @Content
+            )
+    })
     public ResponseEntity<IndustryResponseDto> save(@RequestBody IndustryRequestDto industryRequestDto) {
         try {
             return ResponseEntity.ok(industryService.save(industryRequestDto));
@@ -56,7 +112,22 @@ public class IndustryController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @Operation(summary = "Logical delete a country")
+    @Operation(
+            summary = "Logically delete an industry",
+            description = "Logical deletion of an industry by setting is_active = false."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Industry successfully deleted (marked as inactive)",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Industry not found",
+                    content = @Content
+            )
+    })
     public ResponseEntity<Void> delete(@PathVariable @NotNull int id) {
         try {
             industryService.delete(id);
