@@ -1,9 +1,7 @@
 package org.ex9.contractorservice.mapper;
 
-import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.orgform.OrgFormRequestDto;
 import org.ex9.contractorservice.dto.orgform.OrgFormResponseDto;
-import org.ex9.contractorservice.model.Industry;
 import org.ex9.contractorservice.model.OrgForm;
 
 /**
