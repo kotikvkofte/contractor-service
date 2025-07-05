@@ -7,6 +7,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+/**
+ * Сущность, представляющая страну в справочнике.
+ * Соответствует таблице {@code country} в базе данных.
+ * @author Краковцев Артём
+ */
 @Data
 @Builder
 @AllArgsConstructor
