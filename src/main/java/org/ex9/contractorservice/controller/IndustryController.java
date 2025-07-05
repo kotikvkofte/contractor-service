@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
+import org.apache.logging.log4j.LogManager;
 import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.industry.IndustryResponseDto;
 import org.ex9.contractorservice.exception.IndustryNotFoundException;
@@ -28,6 +29,7 @@ import java.util.List;
 @Tag(name = "Industry API", description = "API for managing industry reference data in the contractor service")
 public class IndustryController {
 
+    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(IndustryController.class);
     private final IndustryService industryService;
 
     @Autowired
@@ -51,6 +53,9 @@ public class IndustryController {
             )
     })
     public ResponseEntity<List<IndustryResponseDto>> getAllActive() {
+        LOG.info("Getting all active industries");
+        List<IndustryResponseDto> industries = industryService.findAll();
+        LOG.info("Found {} active industries", industries.size());
         return ResponseEntity.ok(industryService.findAll());
     }
 
@@ -75,9 +80,11 @@ public class IndustryController {
             )
     })
     public ResponseEntity<IndustryResponseDto> getById(@PathVariable @NotNull int id) {
+        LOG.info("Getting industry by ID: {}", id);
         try {
             return ResponseEntity.ok(industryService.findById(id));
         } catch (IndustryNotFoundException e) {
+            LOG.warn("Industry not found with ID: {}", id);
             return ResponseEntity.notFound().build();
         }
     }
@@ -104,9 +111,13 @@ public class IndustryController {
             )
     })
     public ResponseEntity<IndustryResponseDto> save(@RequestBody IndustryRequestDto industryRequestDto) {
+        LOG.info("Saving industry: {}:{}", industryRequestDto.getId(), industryRequestDto.getName());
         try {
-            return ResponseEntity.ok(industryService.save(industryRequestDto));
+            var savedIndustry = industryService.save(industryRequestDto);
+            LOG.info("Successfully saved industry: {}:{}", savedIndustry.getId(), savedIndustry.getName());
+            return ResponseEntity.ok(savedIndustry);
         } catch (IndustryNotFoundException e) {
+            LOG.warn("Failed to save industry: {}", e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -129,10 +140,13 @@ public class IndustryController {
             )
     })
     public ResponseEntity<Void> delete(@PathVariable @NotNull int id) {
+        LOG.info("Deleting industry by ID: {}", id);
         try {
             industryService.delete(id);
+            LOG.info("industry deleted: {}", id);
             return ResponseEntity.accepted().build();
         } catch (IndustryNotFoundException e) {
+            LOG.warn("Delete failed - industry {} not found", id);
             return ResponseEntity.notFound().build();
         }
     }

@@ -53,11 +53,8 @@ public class CountryController {
             )
     })
     public ResponseEntity<List<CountryResponseDto>> getAllActive() {
-
-        LOG.info("Get all country's list");
-
+        LOG.info("Getting all active countries");
         return ResponseEntity.ok(countryService.findAll());
-
     }
 
     @GetMapping("/{id}")
@@ -81,9 +78,11 @@ public class CountryController {
             )
     })
     public ResponseEntity<CountryResponseDto> getById(@PathVariable @NotNull String id) {
+        LOG.info("Getting country by ID: {}", id);
         try {
             return ResponseEntity.ok(countryService.findById(id));
         } catch (CountryNotFoundException e) {
+            LOG.warn("Country not found: {}", id);
             return ResponseEntity.notFound().build();
         }
     }
@@ -110,6 +109,7 @@ public class CountryController {
             )
     })
     public ResponseEntity<CountryResponseDto> save(@RequestBody CountryRequestDto countryRequest) {
+        LOG.info("Saving country: {}:{}", countryRequest.getId(), countryRequest.getName());
         return ResponseEntity.ok(countryService.save(countryRequest));
     }
 
@@ -131,10 +131,13 @@ public class CountryController {
             )
     })
     public ResponseEntity<Void> delete(@PathVariable @NotNull String id) {
+        LOG.info("Deleting country ID: {}", id);
         try {
             countryService.delete(id);
+            LOG.info("Country deleted: {}", id);
             return ResponseEntity.noContent().build();
         } catch (CountryNotFoundException e) {
+            LOG.warn("Delete failed - country with {} not found", id);
             return ResponseEntity.notFound().build();
         }
     }
