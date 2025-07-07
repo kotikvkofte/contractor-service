@@ -1,5 +1,6 @@
 package org.ex9.contractorservice.service;
 
+import org.apache.logging.log4j.LogManager;
 import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.industry.IndustryResponseDto;
 import org.ex9.contractorservice.exception.IndustryNotFoundException;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 public class IndustryService {
 
+    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(IndustryService.class);
     private final IndustryRepository repository;
 
     /**

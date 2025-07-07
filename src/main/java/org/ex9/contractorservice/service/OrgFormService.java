@@ -1,5 +1,6 @@
 package org.ex9.contractorservice.service;
 
+import org.apache.logging.log4j.LogManager;
 import org.ex9.contractorservice.dto.orgform.OrgFormRequestDto;
 import org.ex9.contractorservice.dto.orgform.OrgFormResponseDto;
 import org.ex9.contractorservice.exception.OrgFormNotFoundException;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 public class OrgFormService {
 
+    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(OrgFormService.class);
     private final OrgFormRepository repository;
 
     /**
