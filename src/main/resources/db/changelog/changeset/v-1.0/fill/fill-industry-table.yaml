@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: fill-industry
+      author: Artyom
+      comment: "Заполнение справочной таблицы industry из файла industry.csv"
+      changes:
+        - loadData:
+            file: db/changelog/csv/industry.csv
+            tableName: industry
+            separator: ";"
+            encoding: UTF-8
+            quotchar: '"'

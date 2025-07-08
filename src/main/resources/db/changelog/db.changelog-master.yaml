@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/v-1.0/create/create-country-table.yml
+  - include:
+      file: db/changelog/changeset/v-1.0/fill/fill-country-table.yml
+
+  - include:
+      file: db/changelog/changeset/v-1.0/create/create-industry-table.yml
+  - include:
+      file: db/changelog/changeset/v-1.0/fill/fill-industry-table.yaml
+
+  - include:
+      file: db/changelog/changeset/v-1.0/create/create-org_form-table.yaml
+  - include:
+      file: db/changelog/changeset/v-1.0/fill/fill-org_form-table.yaml
+
+  - include:
+      file: db/changelog/changeset/v-1.0/create/create-contractor-table.yaml
+#
+#  - include:
+#      file: db/changelog/changeset/v-1.0/fix/fix-sequence-for-org-form.yml
+#  - include:
+#      file: db/changelog/changeset/v-1.0/fix/fix-sequence-for-industry.yml
+
+#  - include:
+#      file: db/changelog/changeset/v-1.1/convert/convert-industry-to-identity.yml
+#  - include:
+#      file: db/changelog/changeset/v-1.1/convert/convert-org_form-to-identity.yml

@@ -16,3 +16,13 @@ logging:
         transaction: DEBUG
         jdbc:
           core: DEBUG
+
+springdoc:
+  api-docs:
+    version: openapi_3_1
+  info:
+    title: Contractor Service API
+    description: API для управления данными контрагентов и связанными справочниками (страны, отрасли, организационные формы).
+    version: 1.0.0
+    contact:
+      name: Краковцев Артём
