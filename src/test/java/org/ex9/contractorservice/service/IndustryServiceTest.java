@@ -132,7 +132,7 @@ class IndustryServiceTest {
 
 	@Test
 	@DisplayName("delete() should logical delete when id exist")
-	void delete_WhenIdExists_ShouldLogicalDeleteCountry() {
+	void delete_WhenIdExists_ShouldLogicalDeleteIndustry() {
 		int id = anyInt();
 
 		when(industryRepository.existsById(id)).thenReturn(true);
