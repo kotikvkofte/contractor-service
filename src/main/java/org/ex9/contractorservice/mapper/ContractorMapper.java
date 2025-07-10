@@ -7,7 +7,7 @@ import org.ex9.contractorservice.model.Country;
 import org.ex9.contractorservice.model.Industry;
 import org.ex9.contractorservice.model.OrgForm;
 
-public class ContractorMapper {
+public final class ContractorMapper {
 
 	private ContractorMapper() {
 	}

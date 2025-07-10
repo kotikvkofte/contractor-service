@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.util.Date;
 
 @Data
-@Builder(toBuilder=true)
+@Builder(toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Setter(value = AccessLevel.PUBLIC)
