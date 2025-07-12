@@ -80,8 +80,8 @@ class CountryRepositoryTest {
         assertEquals(1, activeCountries.size());
         assertEquals("RUS", activeCountries.get(0).getId());
 
+        assertTrue(countryRepository.existsById("KZ"));
         Optional<Country> deactivatedCountry = countryRepository.findById("KZ");
-        assertTrue(deactivatedCountry.isPresent());
-        assertFalse(deactivatedCountry.get().getIsActive());
+        assertTrue(deactivatedCountry.isEmpty());
     }
 }

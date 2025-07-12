@@ -70,23 +70,18 @@ public class ContractorService {
 	@Transactional
 	public ContractorResponseDto save(ContractorRequestDto request) {
 		if (request.getParentId() != null) {
-			var parent = contractorJdbcDao.findById(request.getParentId());
-			if (parent.isEmpty() || !parent.get().getIsActive()) {
-				throw new ContractorNotFoundException("Parent contractor with ID " + request.getParentId() + " not found");
-			}
+			contractorJdbcDao.findById(request.getParentId())
+					.orElseThrow(() -> new ContractorNotFoundException("Parent contractor with ID " + request.getParentId() + " not found"));
 		}
-		var country = countryRepository.findById(request.getCountryId());
-		if (country.isEmpty() || !country.get().getIsActive()) {
-			throw new CountryNotFoundException("Country with ID " + request.getCountryId() + " not found");
-		}
-		var industry = industryRepository.findById(request.getIndustryId());
-		if (industry.isEmpty() || !industry.get().getIsActive()) {
-			throw new IndustryNotFoundException("Industry with ID " + request.getIndustryId() + " not found");
-		}
-		var orgForm = orgFormRepository.findById(request.getOrgFormId());
-		if (orgForm.isEmpty() || !orgForm.get().getIsActive()) {
-			throw new OrgFormNotFoundException("OrgForm with ID " + request.getOrgFormId() + " not found");
-		}
+
+		countryRepository.findById(request.getCountryId())
+				.orElseThrow(() -> new CountryNotFoundException("Country with ID " + request.getCountryId() + " not found"));
+
+		industryRepository.findById(request.getIndustryId())
+				.orElseThrow(() -> new IndustryNotFoundException("Industry with ID " + request.getIndustryId() + " not found"));
+
+		orgFormRepository.findById(request.getOrgFormId())
+				.orElseThrow(() -> new OrgFormNotFoundException("OrgForm with ID " + request.getOrgFormId() + " not found"));
 
 		var c = ContractorMapper.toContractor(request);
 		if (contractorRepository.existsById(c.getId())) {

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Репозиторий для работы с сущностью {@link Country} в базе данных.
@@ -25,6 +26,14 @@ public interface CountryRepository extends CrudRepository<Country, String> {
      * @return список активных стран
      */
     List<Country> findAllByIsActiveTrue();
+
+    /**
+     * Находит активную страну по ее идентификатору где {@code is_active = true}).
+      * @param id уникальный идентификатор страны
+     * @return активную страну
+     */
+    @Query("SELECT * FROM country WHERE is_active=true AND id=:id ")
+    Optional<Country> findById(String id);
 
     /**
      * Вставляет новую запись о стране в таблицу {@code country}.
