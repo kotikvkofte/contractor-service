@@ -13,24 +13,16 @@ import org.ex9.contractorservice.dto.ErrorResponse;
 import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
-import org.ex9.contractorservice.exception.ContractorNotFoundException;
-import org.ex9.contractorservice.exception.CountryNotFoundException;
-import org.ex9.contractorservice.exception.IndustryNotFoundException;
-import org.ex9.contractorservice.exception.OrgFormNotFoundException;
 import org.ex9.contractorservice.service.ContractorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -158,27 +150,6 @@ public class ContractorController {
     @PostMapping("/search")
     public ResponseEntity<List<ContractorResponseDto>> search(@Valid @RequestBody SearchContractorRequestDto request) {
         return ResponseEntity.ok(contractorService.search(request));
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    @ApiResponse(
-            responseCode = "404",
-            description = "Contractor not found",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )
-    )
-    public ErrorResponse handleCountryNotFoundException(RuntimeException e) {
-        if (e instanceof ContractorNotFoundException ||
-                e instanceof IndustryNotFoundException ||
-                e instanceof OrgFormNotFoundException ||
-                e instanceof CountryNotFoundException) {
-            return new ErrorResponse(e.getMessage());
-        }
-        throw e;
     }
 
 }

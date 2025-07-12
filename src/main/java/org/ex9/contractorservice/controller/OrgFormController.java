@@ -11,20 +11,15 @@ import lombok.extern.log4j.Log4j2;
 import org.ex9.contractorservice.dto.ErrorResponse;
 import org.ex9.contractorservice.dto.orgform.OrgFormRequestDto;
 import org.ex9.contractorservice.dto.orgform.OrgFormResponseDto;
-import org.ex9.contractorservice.exception.OrgFormNotFoundException;
 import org.ex9.contractorservice.service.OrgFormService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -142,21 +137,6 @@ public class OrgFormController {
         orgFormService.delete(id);
         log.debug("orgForm deleted: {}", id);
         return ResponseEntity.accepted().build();
-    }
-
-    @ExceptionHandler(OrgFormNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    @ApiResponse(
-            responseCode = "404",
-            description = "Organizational form not found",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )
-    )
-    public ErrorResponse handleOrgFormNotFoundException(OrgFormNotFoundException e) {
-        return new ErrorResponse(e.getMessage());
     }
 
 }
