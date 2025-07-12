@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Репозиторий для работы с сущностью {@link OrgForm} в базе данных.
@@ -23,6 +24,14 @@ public interface OrgFormRepository extends CrudRepository<OrgForm, Integer> {
      * @return список активных организационных форм
      */
     List<OrgForm> findAllByIsActiveTrue();
+
+    /**
+     * Находит активную организационную форму по ее идентификатору где {@code is_active = true}).
+     * @param id уникальный идентификатор организационной формы
+     * @return активная организационная форма
+     */
+    @Query("SELECT * FROM org_form WHERE is_active=true AND id=:id ")
+    Optional<OrgForm> findById(String id);
 
     /**
      * Выполняет логическое удаление организационной формы по её идентификатору,

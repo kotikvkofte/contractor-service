@@ -1,6 +1,5 @@
 package org.ex9.contractorservice.service;
 
-import org.apache.logging.log4j.LogManager;
 import org.ex9.contractorservice.dto.orgform.OrgFormRequestDto;
 import org.ex9.contractorservice.dto.orgform.OrgFormResponseDto;
 import org.ex9.contractorservice.exception.OrgFormNotFoundException;
@@ -9,6 +8,7 @@ import org.ex9.contractorservice.model.OrgForm;
 import org.ex9.contractorservice.repository.OrgFormRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 public class OrgFormService {
 
-    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(OrgFormService.class);
     private final OrgFormRepository repository;
 
     /**
@@ -66,6 +65,7 @@ public class OrgFormService {
      * @return DTO {@link OrgFormResponseDto} с данными сохранённой или обновлённой организационной формы
      * @throws OrgFormNotFoundException если указан ID, но организационная форма не найдена
      */
+    @Transactional
     public OrgFormResponseDto save(OrgFormRequestDto request) {
         OrgForm orgForm = OrgFormMapper.toOrgForm(request);
 
@@ -84,6 +84,7 @@ public class OrgFormService {
      * @param id уникальный идентификатор организационной формы
      * @throws OrgFormNotFoundException если организационная форма с указанным ID не существует
      */
+    @Transactional
     public void delete(int id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);

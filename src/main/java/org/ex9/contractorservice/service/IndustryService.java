@@ -1,6 +1,5 @@
 package org.ex9.contractorservice.service;
 
-import org.apache.logging.log4j.LogManager;
 import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.industry.IndustryResponseDto;
 import org.ex9.contractorservice.exception.IndustryNotFoundException;
@@ -9,6 +8,7 @@ import org.ex9.contractorservice.model.Industry;
 import org.ex9.contractorservice.repository.IndustryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 public class IndustryService {
 
-    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(IndustryService.class);
     private final IndustryRepository repository;
 
     /**
@@ -63,6 +62,7 @@ public class IndustryService {
      * @return DTO {@link IndustryResponseDto} с данными сохранённого или обновлённого производства
      * @throws IndustryNotFoundException если указан ID, но производство не найдено
      */
+    @Transactional
     public IndustryResponseDto save(IndustryRequestDto request) {
         Industry industry = IndustryMapper.toIndustry(request);
         if (industry.getId() != null && !repository.existsById(industry.getId())) {
@@ -79,6 +79,7 @@ public class IndustryService {
      * @param id уникальный идентификатор производства
      * @throws IndustryNotFoundException если производство с указанным ID не существует
      */
+    @Transactional
     public void delete(int id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);

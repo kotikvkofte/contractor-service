@@ -56,17 +56,15 @@ class CountryControllerTest {
     }
 
     @Test
-    @DisplayName("getById() returns 404 NOT_FOUND")
-    void getById_WhenCountryNotFound_ShouldReturnExceptionResponseEntity() {
+    @DisplayName("getById() throw exception")
+    void getById_WhenCountryNotFound_ShouldThrowException() {
         var country = new CountryResponseDto("FRT", "first country");
 
        doThrow(new CountryNotFoundException("Country not found with id " + country.getId()))
                .when(this.countryService).findById(country.getId());
 
-        var response = this.countryController.getById(country.getId());
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+       assertThrows(CountryNotFoundException.class, () -> this.countryController.getById(country.getId()));
+        verify(countryService).findById(country.getId());
     }
 
     @Test
@@ -99,19 +97,14 @@ class CountryControllerTest {
     }
 
     @Test
-    @DisplayName("save() returns 404 NOT_FOUND")
-    void delete_WhenCountryNotFound_ShouldReturnStatusNotFound() {
+    @DisplayName("delete() throw exception")
+    void delete_WhenCountryNotFound_ShouldThrowException() {
         String countryId = "FRT";
 
         doThrow(new CountryNotFoundException("Country not found with id " + countryId))
                 .when(countryService).delete(countryId);
 
-        var response = this.countryController.delete(countryId);
-
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-
+        assertThrows(CountryNotFoundException.class, () -> this.countryController.delete(countryId));
         verify(countryService, times(1)).delete(countryId);
     }
 

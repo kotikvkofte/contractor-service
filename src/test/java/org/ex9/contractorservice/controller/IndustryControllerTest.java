@@ -1,12 +1,8 @@
 package org.ex9.contractorservice.controller;
 
-import org.ex9.contractorservice.dto.country.CountryRequestDto;
-import org.ex9.contractorservice.dto.country.CountryResponseDto;
 import org.ex9.contractorservice.dto.industry.IndustryRequestDto;
 import org.ex9.contractorservice.dto.industry.IndustryResponseDto;
-import org.ex9.contractorservice.exception.CountryNotFoundException;
 import org.ex9.contractorservice.exception.IndustryNotFoundException;
-import org.ex9.contractorservice.service.CountryService;
 import org.ex9.contractorservice.service.IndustryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,17 +56,16 @@ class IndustryControllerTest {
 	}
 
 	@Test
-	@DisplayName("getById() returns 404 NOT_FOUND")
-	void getById_WhenCountryNotFound_ShouldReturnExceptionResponseEntity() {
+	@DisplayName("getById() throw exception")
+	void getById_WhenIndustryNotFound_ShouldThrowException() {
 		var industry = new IndustryResponseDto(1, "first industry");
 
 		doThrow(new IndustryNotFoundException("Industry not found with id " + industry.getId()))
 				.when(this.industryService).findById(industry.getId());
 
-		var response = this.industryController.getById(industry.getId());
 
-		assertNotNull(response);
-		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		assertThrows(IndustryNotFoundException.class, () -> this.industryController.getById(industry.getId()));
+		verify(industryService, times(1)).findById(industry.getId());
 	}
 
 	@Test
@@ -103,18 +98,15 @@ class IndustryControllerTest {
 	}
 
 	@Test
-	@DisplayName("save() returns 404 NOT_FOUND")
-	void delete_WhenNotFound_ShouldReturnStatusNotFound() {
+	@DisplayName("delete() throw exception")
+	void delete_WhenNotFound_ShouldThrowException() {
 		int industryId = 13;
 
 		doThrow(new IndustryNotFoundException("Industry not found with id " + industryId))
 				.when(industryService).delete(industryId);
 
-		var response = this.industryController.delete(industryId);
 
-		assertNotNull(response);
-		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-
+		assertThrows(IndustryNotFoundException.class, () -> this.industryController.delete(industryId));
 		verify(industryService, times(1)).delete(industryId);
 	}
 
