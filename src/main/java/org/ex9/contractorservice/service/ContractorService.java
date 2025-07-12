@@ -24,11 +24,11 @@ import java.util.List;
 @Service
 public class ContractorService {
 
-	private ContractorJdbcDao contractorJdbcDao;
-	private ContractorRepository contractorRepository;
-	private CountryRepository countryRepository;
-	private IndustryRepository industryRepository;
-	private OrgFormRepository orgFormRepository;
+	private final ContractorJdbcDao contractorJdbcDao;
+	private final ContractorRepository contractorRepository;
+	private final CountryRepository countryRepository;
+	private final IndustryRepository industryRepository;
+	private final OrgFormRepository orgFormRepository;
 
 	@Autowired
 	public ContractorService(ContractorJdbcDao contractorJdbcDao,
@@ -113,6 +113,7 @@ public class ContractorService {
 	 * @param id уникальный идентификатор контрагента
 	 * @throws ContractorNotFoundException если контрагент с указанным ID не существует
 	 */
+	@Transactional
 	public void delete(String id) {
 		if (contractorRepository.existsById(id)) {
 			contractorRepository.deleteById(id);
