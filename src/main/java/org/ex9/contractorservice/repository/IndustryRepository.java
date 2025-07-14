@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Репозиторий для работы с сущностью {@link Industry} в базе данных.
@@ -23,6 +24,14 @@ public interface IndustryRepository extends CrudRepository<Industry, Integer> {
      * @return список активных производств
      */
     List<Industry> findAllByIsActiveTrue();
+
+    /**
+     * Находит активное производство по его идентификатору где {@code is_active = true}).
+     * @param id уникальный идентификатор производства
+     * @return активное производство
+     */
+    @Query("SELECT * FROM industry WHERE is_active=true AND id=:id ")
+    Optional<Industry> findById(String id);
 
     /**
      * Выполняет логическое удаление производства по её идентификатору, устанавливая

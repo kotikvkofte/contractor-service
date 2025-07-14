@@ -1,9 +1,13 @@
 package org.ex9.contractorservice.dto.orgform;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Data Transfer Object representing a organizational form  in the contractor service")
 public class OrgFormResponseDto {
 

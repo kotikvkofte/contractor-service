@@ -71,6 +71,7 @@ public class CountryService {
      * @param id уникальный идентификатор страны
      * @throws CountryNotFoundException если страны с указанным ID не существует
      */
+    @Transactional
     public void delete(String id) {
         if (countryRepository.existsById(id)) {
             countryRepository.deleteById(id);

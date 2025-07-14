@@ -11,12 +11,16 @@ import lombok.extern.log4j.Log4j2;
 import org.ex9.contractorservice.dto.ErrorResponse;
 import org.ex9.contractorservice.dto.country.CountryRequestDto;
 import org.ex9.contractorservice.dto.country.CountryResponseDto;
-import org.ex9.contractorservice.exception.CountryNotFoundException;
 import org.ex9.contractorservice.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -76,7 +80,7 @@ public class CountryController {
                     )
             )
     })
-    public ResponseEntity<?> getById(@PathVariable @NotNull String id) {
+    public ResponseEntity<CountryResponseDto> getById(@PathVariable @NotNull String id) {
         log.debug("Getting country by ID: {}", id);
         return ResponseEntity.ok(countryService.findById(id));
     }
@@ -131,21 +135,6 @@ public class CountryController {
         countryService.delete(id);
         log.debug("Country deleted: {}", id);
         return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(CountryNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    @ApiResponse(
-            responseCode = "404",
-            description = "Country not found",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )
-    )
-    public ErrorResponse handleCountryNotFoundException(CountryNotFoundException e) {
-        return new ErrorResponse(e.getMessage());
     }
 
 }

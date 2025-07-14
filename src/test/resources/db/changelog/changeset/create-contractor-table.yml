@@ -1,0 +1,90 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-contractor-test
+      author: Artyom
+      comment: "Создание тестовой таблицы contractor"
+      changes:
+        - createTable:
+            tableName: contractor
+            columns:
+              - column:
+                  name: id
+                  type: varchar(12)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: varchar(12)
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name_full
+                  type: text
+              - column:
+                  name: inn
+                  type: text
+              - column:
+                  name: ogrn
+                  type: text
+              - column:
+                  name: country
+                  type: text
+              - column:
+                  name: industry
+                  type: int4
+              - column:
+                  name: org_form
+                  type: int4
+              - column:
+                  name: create_date
+                  type: timestamp
+                  defaultValue: now
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modify_date
+                  type: timestamp
+              - column:
+                  name: create_user_id
+                  type: text
+              - column:
+                  name: modify_user_id
+                  type: text
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: contractor
+            baseColumnNames: parent_id
+            constraintName: fk_contractor_parent
+            referencedTableName: contractor
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: contractor
+            baseColumnNames: country
+            constraintName: fk_contractor_country
+            referencedTableName: country
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: contractor
+            baseColumnNames: industry
+            constraintName: fk_contractor_industry
+            referencedTableName: industry
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: contractor
+            baseColumnNames: org_form
+            constraintName: fk_contractor_org_form
+            referencedTableName: org_form
+            referencedColumnNames: id
