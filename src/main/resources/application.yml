@@ -4,10 +4,10 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
-  datasource:
-    url: jdbc:postgresql://localhost:5432/contractor-service-db
-    username: user
-    password: 1
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/contractor-service-db
+#    username: user
+#    password: 1
 
 logging:
   level:
