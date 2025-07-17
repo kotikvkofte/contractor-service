@@ -7,86 +7,125 @@ import org.ex9.contractorservice.model.Country;
 import org.ex9.contractorservice.model.Industry;
 import org.ex9.contractorservice.model.OrgForm;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public final class ContractorMapper {
 
-	private ContractorMapper() {
-	}
+    private ContractorMapper() {
+    }
 
-	public static ContractorResponseDto toDto(Contractor contractor) {
+    public static ContractorResponseDto toDto(Contractor contractor) {
 
-		var builder = ContractorResponseDto.builder();
+        return ContractorResponseDto.builder()
+                .id(contractor.getId())
+                .parentId(contractor.getParent() != null ? contractor.getParent().getId() : null)
+                .name(contractor.getName())
+                .nameFull(contractor.getNameFull())
+                .inn(contractor.getInn())
+                .ogrn(contractor.getOgrn())
+                .country(contractor.getCountry().getName())
+                .industry(contractor.getIndustry().getName())
+                .orgForm(contractor.getOrgForm().getName())
+                .build();
+    }
 
-		builder.id(contractor.getId());
-		builder.parentId(contractor.getParent() != null ? contractor.getParent().getId() : null);
-		builder.name(contractor.getName());
-		builder.nameFull(contractor.getNameFull());
-		builder.inn(contractor.getInn());
-		builder.ogrn(contractor.getOgrn());
-		builder.country(contractor.getCountry().getName());
-		builder.industry(contractor.getIndustry().getName());
-		builder.orgForm(contractor.getOrgForm().getName());
+    public static Contractor toContractor(ContractorRequestDto request) {
+        Contractor parent = request.getParentId() != null ? Contractor.builder().id(request.getParentId()).build() : null;
+        Country country = Country.builder().id(request.getCountryId()).build();
+        Industry industry = Industry.builder().id(request.getIndustryId()).build();
+        OrgForm orgForm = OrgForm.builder().id(request.getOrgFormId()).build();
 
-		return builder.build();
-	}
+        return Contractor.builder()
+                .id(request.getId())
+                .parent(parent)
+                .name(request.getName())
+                .nameFull(request.getNameFull())
+                .inn(request.getInn())
+                .ogrn(request.getOgrn())
+                .country(country)
+                .industry(industry)
+                .orgForm(orgForm)
+                .build();
 
-	public static Contractor toContractor(ContractorRequestDto request) {
-		Contractor parent = request.getParentId() != null ? Contractor.builder().id(request.getParentId()).build() : null;
-		Country country = Country.builder().id(request.getCountryId()).build();
-		Industry industry = Industry.builder().id(request.getIndustryId()).build();
-		OrgForm orgForm = OrgForm.builder().id(request.getOrgFormId()).build();
+    }
 
-		return Contractor.builder()
-				.id(request.getId())
-				.parent(parent)
-				.name(request.getName())
-				.nameFull(request.getNameFull())
-				.inn(request.getInn())
-				.ogrn(request.getOgrn())
-				.country(country)
-				.industry(industry)
-				.orgForm(orgForm)
-				.build();
+    public static Contractor toContractor(ResultSet rs) throws SQLException {
+        var contractorBuilder = Contractor.builder();
+        var id = rs.getString("id");
+        contractorBuilder.id(id);
+        contractorBuilder.name(rs.getString("name"));
+        contractorBuilder.nameFull(rs.getString("name_full"));
+        contractorBuilder.inn(rs.getString("inn"));
+        contractorBuilder.ogrn(rs.getString("ogrn"));
+        contractorBuilder.createDate(rs.getDate("create_date"));
+        contractorBuilder.modifyDate(rs.getDate("modify_date"));
+        contractorBuilder.createUserId(rs.getString("create_user_id"));
+        contractorBuilder.modifyUserId(rs.getString("modify_user_id"));
 
-	}
+        Country country = Country.builder()
+                .id(rs.getString("countryid"))
+                .name(rs.getString("countryname"))
+                .build();
+        Industry industry = Industry.builder()
+                .id(rs.getInt("industryid"))
+                .name(rs.getString("industryname"))
+                .build();
+        OrgForm orgForm = OrgForm.builder()
+                .id(rs.getInt("orgformid"))
+                .name(rs.getString("orgformname"))
+                .build();
 
-	public static Contractor toContractor(ContractorRequestDto request,
-										  Country country,
-										  Industry industry,
-										  OrgForm orgForm) {
-		Contractor parent = request.getParentId() != null ? Contractor.builder().id(request.getParentId()).build() : null;
+        Contractor parent = new Contractor();
+        parent.setId(rs.getString("parentId"));
+        parent.setName(rs.getString("parentName"));
 
-		return Contractor.builder()
-				.id(request.getId())
-				.parent(parent)
-				.name(request.getName())
-				.nameFull(request.getNameFull())
-				.inn(request.getInn())
-				.ogrn(request.getOgrn())
-				.country(country)
-				.industry(industry)
-				.orgForm(orgForm)
-				.build();
+        contractorBuilder.country(country);
+        contractorBuilder.industry(industry);
+        contractorBuilder.orgForm(orgForm);
+        contractorBuilder.parent(parent);
 
-	}
+        return contractorBuilder.build();
+    }
 
-	public static Contractor toContractor(ContractorRequestDto request,
-										  Contractor parent,
-										  Country country,
-										  Industry industry,
-										  OrgForm orgForm) {
+    public static Contractor toContractor(ContractorRequestDto request,
+                                          Country country,
+                                          Industry industry,
+                                          OrgForm orgForm) {
+        Contractor parent = request.getParentId() != null ? Contractor.builder().id(request.getParentId()).build() : null;
 
-		return Contractor.builder()
-				.id(request.getId())
-				.parent(parent)
-				.name(request.getName())
-				.nameFull(request.getNameFull())
-				.inn(request.getInn())
-				.ogrn(request.getOgrn())
-				.country(country)
-				.industry(industry)
-				.orgForm(orgForm)
-				.build();
+        return Contractor.builder()
+                .id(request.getId())
+                .parent(parent)
+                .name(request.getName())
+                .nameFull(request.getNameFull())
+                .inn(request.getInn())
+                .ogrn(request.getOgrn())
+                .country(country)
+                .industry(industry)
+                .orgForm(orgForm)
+                .build();
 
-	}
+    }
+
+    public static Contractor toContractor(ContractorRequestDto request,
+                                          Contractor parent,
+                                          Country country,
+                                          Industry industry,
+                                          OrgForm orgForm) {
+
+        return Contractor.builder()
+                .id(request.getId())
+                .parent(parent)
+                .name(request.getName())
+                .nameFull(request.getNameFull())
+                .inn(request.getInn())
+                .ogrn(request.getOgrn())
+                .country(country)
+                .industry(industry)
+                .orgForm(orgForm)
+                .build();
+
+    }
 
 }

@@ -2,10 +2,8 @@ package org.ex9.contractorservice.dao;
 
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
 import org.ex9.contractorservice.exception.ContractorNotFoundException;
+import org.ex9.contractorservice.mapper.ContractorMapper;
 import org.ex9.contractorservice.model.Contractor;
-import org.ex9.contractorservice.model.Country;
-import org.ex9.contractorservice.model.Industry;
-import org.ex9.contractorservice.model.OrgForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -14,8 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +56,11 @@ public class ContractorJdbcDao {
 
     public Optional<Contractor> findById(String id) {
 
-        StringBuilder sql = new StringBuilder(template);
+        StringBuilder sql = new StringBuilder(TEMPLATE);
         sql.append(" AND c.id = :id");
         try {
             SqlParameterSource namedParameters = new MapSqlParameterSource("id", id);
-            var contractor = namedParameterJdbcTemplate.queryForObject(sql.toString(), namedParameters, (rs, rowId) -> toContractor(rs));
+            var contractor = namedParameterJdbcTemplate.queryForObject(sql.toString(), namedParameters, (rs, rowId) -> ContractorMapper.toContractor(rs));
             return Optional.of(contractor);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -155,7 +151,7 @@ public class ContractorJdbcDao {
      * @return {@link Page} с найденными контрагентами
      */
     public List<Contractor> search(SearchContractorRequestDto request) {
-        StringBuilder sql = new StringBuilder(template);
+        StringBuilder sql = new StringBuilder(TEMPLATE);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         List<String> conditions = new ArrayList<>();
@@ -199,45 +195,7 @@ public class ContractorJdbcDao {
         params.addValue("offset", request.getPage() * request.getSize());
         params.addValue("limit", request.getSize());
 
-        return namedParameterJdbcTemplate.query(sql.toString(), params, (rs, rowNum) -> toContractor(rs));
-    }
-
-    private Contractor toContractor(ResultSet rs) throws SQLException {
-        var contractorBuilder = Contractor.builder();
-        var id = rs.getString("id");
-        contractorBuilder.id(id);
-        contractorBuilder.name(rs.getString("name"));
-        contractorBuilder.nameFull(rs.getString("name_full"));
-        contractorBuilder.inn(rs.getString("inn"));
-        contractorBuilder.ogrn(rs.getString("ogrn"));
-        contractorBuilder.createDate(rs.getDate("create_date"));
-        contractorBuilder.modifyDate(rs.getDate("modify_date"));
-        contractorBuilder.createUserId(rs.getString("create_user_id"));
-        contractorBuilder.modifyUserId(rs.getString("modify_user_id"));
-
-        Country country = Country.builder()
-                .id(rs.getString("countryid"))
-                .name(rs.getString("countryname"))
-                .build();
-        Industry industry = Industry.builder()
-                .id(rs.getInt("industryid"))
-                .name(rs.getString("industryname"))
-                .build();
-        OrgForm orgForm = OrgForm.builder()
-                .id(rs.getInt("orgformid"))
-                .name(rs.getString("orgformname"))
-                .build();
-
-        Contractor parent = new Contractor();
-        parent.setId(rs.getString("parentId"));
-        parent.setName(rs.getString("parentName"));
-
-        contractorBuilder.country(country);
-        contractorBuilder.industry(industry);
-        contractorBuilder.orgForm(orgForm);
-        contractorBuilder.parent(parent);
-
-        return contractorBuilder.build();
+        return namedParameterJdbcTemplate.query(sql.toString(), params, (rs, rowNum) -> ContractorMapper.toContractor(rs));
     }
 
 }
