@@ -26,7 +26,7 @@ public class ContractorJdbcDao {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private final String template = """
+    private static final String TEMPLATE = """
             SELECT c.id,
                    p.id as parentId,
                    p.name as parentName,
