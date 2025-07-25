@@ -16,14 +16,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContractorRepository extends CrudRepository<Contractor, String> {
 
-	/**
-	 * Выполняет логическое удаление контрагента по его идентификатору, устанавливая
-	 * {@code is_active = false}.
-	 *
-	 * @param id уникальный идентификатор контрагента
-	 */
-	@Query("UPDATE contractor SET is_active=false WHERE id=:id")
-	@Modifying
-	void deleteById(@Param("id") String id);
+    /**
+     * Выполняет логическое удаление контрагента по его идентификатору, устанавливая
+     * {@code is_active = false}.
+     *
+     * @param id уникальный идентификатор контрагента
+     */
+    @Query("UPDATE contractor SET is_active=false WHERE id=:id")
+    @Modifying
+    void deleteById(@Param("id") String id);
 
 }
