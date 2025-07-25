@@ -88,7 +88,8 @@ public class ContractorJdbcDao {
                 country = :countryId,
                 industry = :industryId,
                 org_form = :orgFormId,
-                modify_date = :modifyDate
+                modify_date = :modifyDate,
+                modify_user_id = :modifyUserId
             WHERE id = :id
             """;
 
@@ -103,6 +104,7 @@ public class ContractorJdbcDao {
         params.addValue("industryId", contractor.getIndustry() != null ? contractor.getIndustry().getId() : null);
         params.addValue("orgFormId", contractor.getOrgForm() != null ? contractor.getOrgForm().getId() : null);
         params.addValue("modifyDate", LocalDateTime.now());
+        params.addValue("modifyUserId", contractor.getModifyUserId() != null ? contractor.getModifyUserId() : null);
 
         namedParameterJdbcTemplate.update(sql, params);
         return findById(contractor.getId()).orElseThrow(() ->
@@ -121,10 +123,10 @@ public class ContractorJdbcDao {
     public Contractor insert(Contractor contractor) {
         String sql = """
             INSERT INTO contractor (
-                id, parent_id, name, name_full, inn, ogrn, country, industry, org_form
+                id, parent_id, name, name_full, inn, ogrn, country, industry, org_form, create_user_id
             )
             VALUES (
-                :id, :parentId, :name, :nameFull, :inn, :ogrn, :countryId, :industryId, :orgFormId
+                :id, :parentId, :name, :nameFull, :inn, :ogrn, :countryId, :industryId, :orgFormId, :createUserId
             )
             """;
 
@@ -138,6 +140,7 @@ public class ContractorJdbcDao {
         params.addValue("countryId", contractor.getCountry() != null ? contractor.getCountry().getId() : null);
         params.addValue("industryId", contractor.getIndustry() != null ? contractor.getIndustry().getId() : null);
         params.addValue("orgFormId", contractor.getOrgForm() != null ? contractor.getOrgForm().getId() : null);
+        params.addValue("createUserId", contractor.getCreateUserId() != null ? contractor.getCreateUserId() : null);
 
         namedParameterJdbcTemplate.update(sql, params);
         return findById(contractor.getId()).orElseThrow(() ->
