@@ -17,6 +17,7 @@ import org.ex9.contractorservice.repository.ContractorRepository;
 import org.ex9.contractorservice.repository.CountryRepository;
 import org.ex9.contractorservice.repository.IndustryRepository;
 import org.ex9.contractorservice.repository.OrgFormRepository;
+import org.ex9.contractorservice.service.outbox.OutboxService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ContractorServiceTest {
+	@Mock
+	private OutboxService outboxService;
+
 	@Mock
 	private ContractorJdbcDao contractorJdbcDao;
 
