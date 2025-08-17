@@ -16,6 +16,9 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/changeset/v-1.0/create/create-contractor-table.yaml
+
+  - include:
+      file: db/changelog/changeset/v-1.1/outbox/outbox_event.yaml
 #
 #  - include:
 #      file: db/changelog/changeset/v-1.0/fix/fix-sequence-for-org-form.yml
