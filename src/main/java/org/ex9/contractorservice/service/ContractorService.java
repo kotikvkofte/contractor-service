@@ -1,5 +1,6 @@
 package org.ex9.contractorservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.ex9.contractorservice.dao.ContractorJdbcDao;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
@@ -14,7 +15,7 @@ import org.ex9.contractorservice.repository.ContractorRepository;
 import org.ex9.contractorservice.repository.CountryRepository;
 import org.ex9.contractorservice.repository.IndustryRepository;
 import org.ex9.contractorservice.repository.OrgFormRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ex9.contractorservice.service.outbox.OutboxService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ContractorService {
 
     private final ContractorJdbcDao contractorJdbcDao;
@@ -30,18 +32,8 @@ public class ContractorService {
     private final IndustryRepository industryRepository;
     private final OrgFormRepository orgFormRepository;
 
-    @Autowired
-    public ContractorService(ContractorJdbcDao contractorJdbcDao,
-                             ContractorRepository contractorRepository,
-                             CountryRepository countryRepository,
-                             IndustryRepository industryRepository,
-                             OrgFormRepository orgFormRepository) {
-        this.contractorJdbcDao = contractorJdbcDao;
-        this.contractorRepository = contractorRepository;
-        this.countryRepository = countryRepository;
-        this.industryRepository = industryRepository;
-        this.orgFormRepository = orgFormRepository;
-    }
+    private final OutboxService outboxService;
+
 
     /**
      * Получает контрагента по её идентификатору.
@@ -90,7 +82,11 @@ public class ContractorService {
             contractorJdbcDao.insert(c);
         }
 
-        var contractor = contractorJdbcDao.findById(c.getId()).orElseThrow(() -> new ContractorNotFoundException("Contractor not found with id " + c.getId()));
+        var contractor = contractorJdbcDao.findById(c.getId())
+                .orElseThrow(() -> new ContractorNotFoundException("Contractor not found with id " + c.getId()));
+
+        outboxService.saveEvent(contractor);
+
         return ContractorMapper.toDto(contractor);
     }
 
@@ -132,7 +128,11 @@ public class ContractorService {
             contractorJdbcDao.insert(c);
         }
 
-        var contractor = contractorJdbcDao.findById(c.getId()).orElseThrow(() -> new ContractorNotFoundException("Contractor not found with id " + c.getId()));
+        var contractor = contractorJdbcDao.findById(c.getId()).
+                orElseThrow(() -> new ContractorNotFoundException("Contractor not found with id " + c.getId()));
+
+        outboxService.saveEvent(contractor);
+
         return ContractorMapper.toDto(contractor);
     }
 
