@@ -15,7 +15,6 @@ import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
 import org.ex9.contractorservice.service.ContractorService;
-import org.ex9.contractorservice.service.rabbit.ProducerRabbitService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
