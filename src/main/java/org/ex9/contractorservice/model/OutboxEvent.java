@@ -25,26 +25,26 @@ public class OutboxEvent {
 
     /** Уникальный идентификатор события */
     @Id
-    public UUID id;
+    private UUID id;
 
     /** Тип события (ContractorUpdate) */
     @Column(value = "type")
-    public String type;
+    private String type;
 
     /** Данные события в формате JSON */
     @Column(value = "payload")
-    public String payload;
+    private String payload;
 
     /** Флаг, было ли событие опубликовано событие*/
     @Column(value = "is_publish")
-    public Boolean isPublish;
+    private Boolean isPublish;
 
     /** Время создания события (для очистки данных, например через месяц)*/
     @Column(value = "created_at")
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     /** Время публикации события */
     @Column(value = "published_at")
-    public LocalDateTime publishedAt;
+    private LocalDateTime publishedAt;
 
 }

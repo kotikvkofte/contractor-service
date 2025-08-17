@@ -34,7 +34,6 @@ public class ContractorService {
 
     private final OutboxService outboxService;
 
-
     /**
      * Получает контрагента по её идентификатору.
      *

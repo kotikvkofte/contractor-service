@@ -1,11 +1,9 @@
 package org.ex9.contractorservice.rabbit;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -14,7 +12,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
 public class RabbitMQIT {
@@ -43,9 +41,7 @@ public class RabbitMQIT {
 
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory);
         container.setQueueNames(QUEUE_NAME);
-        container.setMessageListener(message -> {
-            receivedMessages.add(new String(message.getBody()));
-        });
+        container.setMessageListener(message -> receivedMessages.add(new String(message.getBody())));
         container.start();
 
         String msg = "Test message";

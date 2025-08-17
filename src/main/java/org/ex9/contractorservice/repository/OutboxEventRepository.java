@@ -25,7 +25,8 @@ public interface OutboxEventRepository extends CrudRepository<OutboxEvent, UUID>
     /**
      * Добавляет новое событие в таблицу.
      */
-    @Query("INSERT INTO outbox_event(id, type, payload, is_publish, created_at) VALUES (:#{#outboxEvent.id}, :#{#outboxEvent.type}, :#{#outboxEvent.payload}, :#{#outboxEvent.isPublish}, :#{#outboxEvent.createdAt})")
+    @Query("INSERT INTO outbox_event(id, type, payload, is_publish, created_at) " +
+            "VALUES (:#{#outboxEvent.id}, :#{#outboxEvent.type}, :#{#outboxEvent.payload}, :#{#outboxEvent.isPublish}, :#{#outboxEvent.createdAt})")
     @Modifying
     void insert(@Param("outboxEvent") OutboxEvent outboxEvent);
 
