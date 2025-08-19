@@ -1,43 +1,46 @@
 package org.ex9.contractorservice.service.outbox;
 
 import lombok.RequiredArgsConstructor;
-import org.ex9.contractorservice.model.OutboxEvent;
-import org.ex9.contractorservice.repository.OutboxEventRepository;
-import org.ex9.contractorservice.service.rabbit.ProducerRabbitService;
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.extern.log4j.Log4j2;
+import org.ex9.contractorservice.dto.rabbit.ContractorDto;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 /**
  * Сервис для публикации событий из outbox в RabbitMQ.
- * Периодически выбирает неотправленные события и
- * публикует их в RabbitMQ, помечая как отправленные.
+ *
  * @author Крковцев Артём
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class OutboxPublisher {
 
-    private final ProducerRabbitService producerRabbitService;
-    private final OutboxEventRepository outboxEventRepository;
+    private final RabbitTemplate rabbitTemplate;
+
+    @Value("${spring.rabbitmq.confirm-time:1000}")
+    private Long confirmTime;
 
     /**
-     * Публикация неотправленных событий в RabbitMQ.
+     * Отправляет данные о новом/обновленном контрагенте в RabbitMQ.
+     *
+     * @param dto объект с информацией о контрагенте
      */
-    @Scheduled(fixedRate = 5000)
     @Transactional
-    public void publish() {
-        List<OutboxEvent> outboxEvents = outboxEventRepository.findTop100ByIsPublishFalseOrderByCreatedAtAsc();
+    public void publish(ContractorDto dto) {
+        try {
+            rabbitTemplate.invoke(channel -> {
+                channel.convertAndSend(dto);
+                channel.waitForConfirmsOrDie(confirmTime);
+                return null;
+            });
 
-        outboxEvents.forEach(outboxEvent -> {
-            producerRabbitService.sendContractor(outboxEvent.getPayload());
-            outboxEvent.setIsPublish(true);
-            outboxEvent.setPublishedAt(LocalDateTime.now());
-            outboxEventRepository.save(outboxEvent);
-        });
+        } catch (Exception e) {
+            log.error("Error while sending outbox message", e);
+            throw new RuntimeException(e);
+        }
     }
 
 }

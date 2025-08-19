@@ -1,20 +1,25 @@
 package org.ex9.contractorservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.ex9.contractorservice.dao.ContractorJdbcDao;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.country.CountryResponseDto;
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
+import org.ex9.contractorservice.dto.rabbit.ContractorDto;
 import org.ex9.contractorservice.exception.ContractorNotFoundException;
 import org.ex9.contractorservice.exception.CountryNotFoundException;
 import org.ex9.contractorservice.exception.IndustryNotFoundException;
 import org.ex9.contractorservice.exception.OrgFormNotFoundException;
 import org.ex9.contractorservice.mapper.ContractorMapper;
+import org.ex9.contractorservice.model.OutboxEvent;
 import org.ex9.contractorservice.repository.ContractorRepository;
 import org.ex9.contractorservice.repository.CountryRepository;
 import org.ex9.contractorservice.repository.IndustryRepository;
 import org.ex9.contractorservice.repository.OrgFormRepository;
+import org.ex9.contractorservice.service.outbox.OutboxPublisher;
 import org.ex9.contractorservice.service.outbox.OutboxService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -33,6 +38,8 @@ public class ContractorService {
     private final OrgFormRepository orgFormRepository;
 
     private final OutboxService outboxService;
+    private final OutboxPublisher outboxPublisher;
+    private final ObjectMapper objectMapper;
 
     /**
      * Получает контрагента по её идентификатору.
@@ -84,7 +91,14 @@ public class ContractorService {
         var contractor = contractorJdbcDao.findById(c.getId())
                 .orElseThrow(() -> new ContractorNotFoundException("Contractor not found with id " + c.getId()));
 
-        outboxService.saveEvent(contractor);
+        OutboxEvent event = outboxService.saveEvent(contractor);
+        try {
+            ContractorDto dto = objectMapper.readValue(event.getPayload(), ContractorDto.class);
+            outboxPublisher.publish(dto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        outboxService.markAsPublished(event);
 
         return ContractorMapper.toDto(contractor);
     }
@@ -130,7 +144,14 @@ public class ContractorService {
         var contractor = contractorJdbcDao.findById(c.getId()).
                 orElseThrow(() -> new ContractorNotFoundException("Contractor not found with id " + c.getId()));
 
-        outboxService.saveEvent(contractor);
+        OutboxEvent event = outboxService.saveEvent(contractor);
+        try {
+            ContractorDto dto = objectMapper.readValue(event.getPayload(), ContractorDto.class);
+            outboxPublisher.publish(dto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        outboxService.markAsPublished(event);
 
         return ContractorMapper.toDto(contractor);
     }

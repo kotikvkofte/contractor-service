@@ -1,10 +1,12 @@
 package org.ex9.contractorservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,17 +21,21 @@ import java.util.UUID;
  * @author Крковцев Артём
  */
 @Configuration
+@Log4j2
 public class RabbitMQConfig {
 
-    public static final String EXCHANGE = "contractors_contractor_exchange";
-    public static final String ROUTING_KEY = "contractor.updated";
+    @Value("${spring.rabbitmq.exchanges.contractor}")
+    private String contractorsExchange;
+
+    @Value("${spring.rabbitmq.routing-keys.contractor}")
+    private String contractorsRoutingKey;
 
     /**
      * Создаёт exchange для сообщений о контрагентах.
      */
     @Bean
     public TopicExchange contractorsExchange() {
-        return new TopicExchange(EXCHANGE, true, false);
+        return new TopicExchange(contractorsExchange, true, false);
     }
 
     /**
@@ -49,8 +55,8 @@ public class RabbitMQConfig {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
                                          Jackson2JsonMessageConverter converter) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setExchange(EXCHANGE);
-        template.setRoutingKey(ROUTING_KEY);
+        template.setExchange(contractorsExchange);
+        template.setRoutingKey(contractorsRoutingKey);
         template.setMessageConverter(converter);
 
         //messageId

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.ex9.contractorservice.dto.rabbit.ContractorDto;
+import org.ex9.contractorservice.enums.EventType;
 import org.ex9.contractorservice.mapper.ContractorMapper;
 import org.ex9.contractorservice.model.Contractor;
 import org.ex9.contractorservice.model.OutboxEvent;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Сервис для сохранения событий в базу данных.
@@ -34,26 +34,34 @@ public class OutboxService {
      * @param contractor сущность контрагента
      */
     @Transactional
-    public void saveEvent(Contractor contractor) {
-
+    public OutboxEvent saveEvent(Contractor contractor) {
         ContractorDto contractorDto = ContractorMapper.toRabbitDto(contractor);
 
-        String json = null;
+        OutboxEvent outboxEvent;
         try {
-            json = objectMapper.writeValueAsString(contractorDto);
+           String json = objectMapper.writeValueAsString(contractorDto);
+            outboxEvent = OutboxEvent.builder()
+                    .type(EventType.CONTRACTOR_UPDATE)
+                    .payload(json)
+                    .isPublish(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        OutboxEvent outboxEvent = OutboxEvent.builder()
-                .id(UUID.randomUUID())
-                .type("ContractorUpdate")
-                .payload(json)
-                .isPublish(false)
-                .createdAt(LocalDateTime.now())
-                .build();
+        return outboxEventRepository.save(outboxEvent);
+    }
 
-        outboxEventRepository.insert(outboxEvent);
+    /**
+     * Помечает событие как опубликованное.
+     * @param outboxEvent событие которое нужно пометить
+     */
+    @Transactional
+    public void markAsPublished(OutboxEvent outboxEvent) {
+        outboxEvent.setIsPublish(true);
+        outboxEvent.setPublishedAt(LocalDateTime.now());
+        outboxEventRepository.save(outboxEvent);
     }
 
 }

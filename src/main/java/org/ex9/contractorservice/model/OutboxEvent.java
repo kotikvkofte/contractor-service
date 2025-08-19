@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ex9.contractorservice.enums.EventType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -27,9 +28,9 @@ public class OutboxEvent {
     @Id
     private UUID id;
 
-    /** Тип события (ContractorUpdate) */
+    /** Тип события */
     @Column(value = "type")
-    private String type;
+    private EventType type;
 
     /** Данные события в формате JSON */
     @Column(value = "payload")

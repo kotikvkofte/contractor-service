@@ -1,22 +1,24 @@
 package org.ex9.contractorservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ex9.contractorservice.dao.ContractorJdbcDao;
 import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
+import org.ex9.contractorservice.dto.rabbit.ContractorDto;
+import org.ex9.contractorservice.enums.EventType;
 import org.ex9.contractorservice.exception.ContractorNotFoundException;
 import org.ex9.contractorservice.exception.CountryNotFoundException;
 import org.ex9.contractorservice.exception.IndustryNotFoundException;
 import org.ex9.contractorservice.exception.OrgFormNotFoundException;
 import org.ex9.contractorservice.mapper.ContractorMapper;
-import org.ex9.contractorservice.model.Contractor;
-import org.ex9.contractorservice.model.Country;
-import org.ex9.contractorservice.model.Industry;
-import org.ex9.contractorservice.model.OrgForm;
+import org.ex9.contractorservice.model.*;
 import org.ex9.contractorservice.repository.ContractorRepository;
 import org.ex9.contractorservice.repository.CountryRepository;
 import org.ex9.contractorservice.repository.IndustryRepository;
 import org.ex9.contractorservice.repository.OrgFormRepository;
+import org.ex9.contractorservice.service.outbox.OutboxPublisher;
 import org.ex9.contractorservice.service.outbox.OutboxService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +28,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +40,12 @@ import static org.mockito.Mockito.*;
 class ContractorServiceTest {
 	@Mock
 	private OutboxService outboxService;
+
+	@Mock
+	private OutboxPublisher outboxPublisher;
+
+	@Mock
+	private ObjectMapper objectMapper;
 
 	@Mock
 	private ContractorJdbcDao contractorJdbcDao;
@@ -119,7 +129,7 @@ class ContractorServiceTest {
 
 	@Test
 	@DisplayName("save() return new contractor")
-	void save_newContractor_shouldInsertAndReturnContractor() {
+	void save_newContractor_shouldInsertAndReturnContractor() throws JsonProcessingException {
 		this.contractor = ContractorMapper.toContractor(requestDto);
 		when(countryRepository.findById(requestDto.getCountryId())).thenReturn(Optional.of(Country.builder().id("RU").isActive(true).build()));
 		when(industryRepository.findById(requestDto.getIndustryId())).thenReturn(Optional.of(Industry.builder().id(1).isActive(true).build()));
@@ -127,6 +137,21 @@ class ContractorServiceTest {
 		when(contractorRepository.existsById(requestDto.getId())).thenReturn(false);
 		when(contractorJdbcDao.insert(contractor)).thenReturn(contractor);
 		when(contractorJdbcDao.findById(contractor.getId())).thenReturn(Optional.of(contractor));
+
+		ContractorDto contractorDto = ContractorDto.builder()
+				.id("CTR001")
+				.name("Test Contractor")
+				.inn("1234567890")
+				.modifyDateTime(LocalDateTime.now())
+				.build();
+
+		OutboxEvent outboxEvent = new OutboxEvent();
+		outboxEvent.setPayload("{\"id\":\"CTR001\",\"name\":\"Test Contractor\",\"inn\":\"1234567890\",\"modifyDateTime\":\"2025-08-19T16:24:00\"}");
+
+		when(outboxService.saveEvent(any(Contractor.class))).thenReturn(outboxEvent);
+		when(objectMapper.readValue(outboxEvent.getPayload(), ContractorDto.class)).thenReturn(contractorDto);
+		doNothing().when(outboxPublisher).publish(any(ContractorDto.class));
+		doNothing().when(outboxService).markAsPublished(any(OutboxEvent.class));
 
 		ContractorResponseDto result = contractorService.save(requestDto);
 
@@ -142,7 +167,7 @@ class ContractorServiceTest {
 
 	@Test
 	@DisplayName("save() return updated contractor")
-	void save_existingContractor_shouldUpdateAndReturnContractor() {
+	void save_existingContractor_shouldUpdateAndReturnContractor() throws JsonProcessingException {
 		this.contractor = ContractorMapper.toContractor(requestDto);
 		when(countryRepository.findById(requestDto.getCountryId())).thenReturn(Optional.of(Country.builder().id("RU").isActive(true).build()));
 		when(industryRepository.findById(requestDto.getIndustryId())).thenReturn(Optional.of(Industry.builder().id(1).isActive(true).build()));
@@ -150,6 +175,21 @@ class ContractorServiceTest {
 		when(contractorRepository.existsById(requestDto.getId())).thenReturn(true);
 		when(contractorJdbcDao.update(contractor)).thenReturn(contractor);
 		when(contractorJdbcDao.findById(contractor.getId())).thenReturn(Optional.of(contractor));
+
+		ContractorDto contractorDto = ContractorDto.builder()
+				.id("CTR001")
+				.name("Test Contractor")
+				.inn("1234567890")
+				.modifyDateTime(LocalDateTime.now())
+				.build();
+
+		OutboxEvent outboxEvent = new OutboxEvent();
+		outboxEvent.setPayload("{\"id\":\"CTR001\",\"name\":\"Test Contractor\",\"inn\":\"1234567890\",\"modifyDateTime\":\"2025-08-19T16:24:00\"}");
+
+		when(outboxService.saveEvent(any(Contractor.class))).thenReturn(outboxEvent);
+		when(objectMapper.readValue(outboxEvent.getPayload(), ContractorDto.class)).thenReturn(contractorDto);
+		doNothing().when(outboxPublisher).publish(any(ContractorDto.class));
+		doNothing().when(outboxService).markAsPublished(any(OutboxEvent.class));
 
 		ContractorResponseDto result = contractorService.save(requestDto);
 

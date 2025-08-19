@@ -13,7 +13,6 @@ import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
 import org.ex9.contractorservice.service.ContractorService;
-import org.ex9.contractorservice.service.rabbit.ProducerRabbitService;
 import org.ex9.contractorservice.utils.AuthInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,6 @@ import java.util.List;
 public class UiContractorController {
 
     private final ContractorService contractorService;
-    private final ProducerRabbitService producerRabbitService;
 
     @GetMapping("/contractor/{id}")
     @PreAuthorize("hasAnyAuthority('CONTRACTOR_SUPERUSER', 'SUPERUSER')")
