@@ -2,6 +2,7 @@ package org.ex9.contractorservice.mapper;
 
 import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
+import org.ex9.contractorservice.dto.rabbit.ContractorDto;
 import org.ex9.contractorservice.model.Contractor;
 import org.ex9.contractorservice.model.Country;
 import org.ex9.contractorservice.model.Industry;
@@ -9,6 +10,7 @@ import org.ex9.contractorservice.model.OrgForm;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public final class ContractorMapper {
 
@@ -126,6 +128,15 @@ public final class ContractorMapper {
                 .orgForm(orgForm)
                 .build();
 
+    }
+
+    public static ContractorDto toRabbitDto(Contractor contractor) {
+        return ContractorDto.builder()
+                .id(contractor.getId())
+                .name(contractor.getName())
+                .inn(contractor.getInn())
+                .modifyDateTime(LocalDateTime.now())
+                .build();
     }
 
 }

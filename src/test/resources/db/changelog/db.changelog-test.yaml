@@ -4,4 +4,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/changeset/create-contractor-table.yml
 #  - include:
-#      file: db/changelog/changeset/insert-data.yml
+#      file: db/changelog/changeset/outbox_event.yaml

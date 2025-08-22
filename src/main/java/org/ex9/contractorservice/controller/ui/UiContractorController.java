@@ -136,7 +136,10 @@ public class UiContractorController {
     })
     public ResponseEntity<ContractorResponseDto> saveContractor(@RequestBody @NotNull ContractorRequestDto request) {
         String userId = AuthInfo.getUsername();
-        return ResponseEntity.ok(contractorService.save(request, userId));
+
+        var resp = contractorService.save(request, userId);
+
+        return ResponseEntity.ok(resp);
     }
 
     @PostMapping("/contractor/search")

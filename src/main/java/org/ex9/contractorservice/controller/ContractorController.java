@@ -8,13 +8,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.ex9.contractorservice.dto.ErrorResponse;
 import org.ex9.contractorservice.dto.contractor.ContractorRequestDto;
 import org.ex9.contractorservice.dto.contractor.ContractorResponseDto;
 import org.ex9.contractorservice.dto.contractor.SearchContractorRequestDto;
 import org.ex9.contractorservice.service.ContractorService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,16 +29,12 @@ import java.util.List;
 
 @RestController
 @Log4j2
+@RequiredArgsConstructor
 @RequestMapping("contractor")
 @Tag(name = "Contractor API", description = "API for managing contractor data in the contractor service")
 public class ContractorController {
 
-    private ContractorService contractorService;
-
-    @Autowired
-    public ContractorController(ContractorService contractorService) {
-        this.contractorService = contractorService;
-    }
+    private final ContractorService contractorService;
 
     @GetMapping("/{id}")
     @Operation(
