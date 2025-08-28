@@ -1,18 +1,30 @@
 spring:
+  cache:
+    type: redis
   application:
     name: contractor-service
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
-#  datasource:
-#    url: jdbc:postgresql://localhost:5433/contractor-service-db
-#    username: user
-#    password: 1
-#  rabbitmq:
-#    host: localhost
-#    port: 5672
-#    username: guest
-#    password: guest
+  datasource:
+    url: jdbc:postgresql://localhost:5433/contractor-service-db
+    username: user
+    password: 1
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirm-type: simple
+    confirm-time: 1000
+    exchanges:
+      contractor: "contractors_contractor_exchange"
+    routing-keys:
+      contractor: "contractor.updated"
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 jwt:
   secret: some_secret_code_aasdk;j1239;lkasf9o8

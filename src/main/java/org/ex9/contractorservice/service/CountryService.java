@@ -7,10 +7,13 @@ import org.ex9.contractorservice.mapper.CountryMapper;
 import org.ex9.contractorservice.model.Country;
 import org.ex9.contractorservice.repository.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для управления справочником стран.
@@ -21,7 +24,7 @@ import java.util.List;
 public class CountryService {
 
     private final CountryRepository countryRepository;
-
+    private static final String COUNTRIES_CACHE_PREFIX = "countries";
     /**
      * Конструктор сервиса с внедрением зависимости репозитория.
      *
@@ -36,10 +39,11 @@ public class CountryService {
      * Получает список всех активных стран.
      * @return список DTO {@link CountryResponseDto} с данными активных стран
      */
+    @Cacheable(value = COUNTRIES_CACHE_PREFIX, key = "'all'")
     public List<CountryResponseDto> findAll() {
 
         var countryList = countryRepository.findAllByIsActiveTrue();
-        return countryList.stream().map(CountryMapper::toDto).toList();
+        return countryList.stream().map(CountryMapper::toDto).collect(Collectors.toList());
 
     }
 
@@ -53,6 +57,7 @@ public class CountryService {
      * @throws CountryNotFoundException если страна не найдена после сохранения
      */
     @Transactional
+    @CacheEvict(value = COUNTRIES_CACHE_PREFIX, key = "'all'")
     public CountryResponseDto save(CountryRequestDto request) {
         var c = CountryMapper.toCountry(request);
         if (countryRepository.existsById(c.getId())) {
@@ -72,6 +77,7 @@ public class CountryService {
      * @throws CountryNotFoundException если страны с указанным ID не существует
      */
     @Transactional
+    @CacheEvict(value = COUNTRIES_CACHE_PREFIX, key = "'all'")
     public void delete(String id) {
         if (countryRepository.existsById(id)) {
             countryRepository.deleteById(id);
