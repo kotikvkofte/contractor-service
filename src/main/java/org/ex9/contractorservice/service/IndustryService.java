@@ -7,10 +7,13 @@ import org.ex9.contractorservice.mapper.IndustryMapper;
 import org.ex9.contractorservice.model.Industry;
 import org.ex9.contractorservice.repository.IndustryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для управления справочником производств.
@@ -21,6 +24,7 @@ import java.util.List;
 public class IndustryService {
 
     private final IndustryRepository repository;
+    private static final String INDUSTRIES_CACHE_PREFIX = "industries";
 
     /**
      * Конструктор сервиса с внедрением зависимости репозитория.
@@ -37,9 +41,10 @@ public class IndustryService {
      *
      * @return список DTO {@link IndustryResponseDto} с данными активных производств
      */
+    @Cacheable(value = INDUSTRIES_CACHE_PREFIX, key = "'all'")
     public List<IndustryResponseDto> findAll() {
         var industryList = repository.findAllByIsActiveTrue();
-        return industryList.stream().map(IndustryMapper::toDto).toList();
+        return industryList.stream().map(IndustryMapper::toDto).collect(Collectors.toList());
     }
 
     /**
@@ -63,6 +68,7 @@ public class IndustryService {
      * @throws IndustryNotFoundException если указан ID, но производство не найдено
      */
     @Transactional
+    @CacheEvict(value = INDUSTRIES_CACHE_PREFIX, key = "'all'")
     public IndustryResponseDto save(IndustryRequestDto request) {
         Industry industry = IndustryMapper.toIndustry(request);
         if (industry.getId() != null && !repository.existsById(industry.getId())) {
@@ -80,6 +86,7 @@ public class IndustryService {
      * @throws IndustryNotFoundException если производство с указанным ID не существует
      */
     @Transactional
+    @CacheEvict(value = INDUSTRIES_CACHE_PREFIX, key = "'all'")
     public void delete(int id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);

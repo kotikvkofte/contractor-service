@@ -7,10 +7,13 @@ import org.ex9.contractorservice.mapper.OrgFormMapper;
 import org.ex9.contractorservice.model.OrgForm;
 import org.ex9.contractorservice.repository.OrgFormRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для управления справочником организационных форм.
@@ -21,6 +24,7 @@ import java.util.List;
 public class OrgFormService {
 
     private final OrgFormRepository repository;
+    private static final String ORG_FORM_CACHE_PREFIX = "orgforms";
 
     /**
      * Конструктор сервиса с внедрением зависимости репозитория.
@@ -29,20 +33,17 @@ public class OrgFormService {
      */
     @Autowired
     public OrgFormService(OrgFormRepository repository) {
-
         this.repository = repository;
-
     }
 
     /**
      * Получает список всех активных организационных форм.
      * @return список DTO {@link OrgFormResponseDto} с данными активных организационных форм
      */
+    @Cacheable(value = ORG_FORM_CACHE_PREFIX, key = "'all'")
     public List<OrgFormResponseDto> findAll() {
-
         var orgForms = repository.findAllByIsActiveTrue();
-
-        return orgForms.stream().map(OrgFormMapper::toDto).toList();
+        return orgForms.stream().map(OrgFormMapper::toDto).collect(Collectors.toList());
     }
 
     /**
@@ -66,6 +67,7 @@ public class OrgFormService {
      * @throws OrgFormNotFoundException если указан ID, но организационная форма не найдена
      */
     @Transactional
+    @CacheEvict(value = ORG_FORM_CACHE_PREFIX, key = "'all'")
     public OrgFormResponseDto save(OrgFormRequestDto request) {
         OrgForm orgForm = OrgFormMapper.toOrgForm(request);
 
@@ -85,6 +87,7 @@ public class OrgFormService {
      * @throws OrgFormNotFoundException если организационная форма с указанным ID не существует
      */
     @Transactional
+    @CacheEvict(value = ORG_FORM_CACHE_PREFIX, key = "'all'")
     public void delete(int id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
